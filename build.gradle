@@ -1,0 +1,52 @@
+import io.mateo.cxf.codegen.wsdl2java.Wsdl2Java
+
+plugins {
+    id 'java-library'
+    id("io.mateo.cxf-codegen") version "1.2.1"
+}
+
+
+group 'org.montojo'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    cxfCodegen "jakarta.xml.ws:jakarta.xml.ws-api:4.0.0"
+    cxfCodegen "jakarta.annotation:jakarta.annotation-api:2.1.1"
+    cxfCodegen 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.0'
+
+//    needed for generated sources, as it was removed after Java 11
+
+    implementation 'com.sun.xml.ws:jaxws-rt:4.0.0'
+
+
+
+
+
+
+}
+
+
+cxfCodegen {
+    cxfVersion = "4.0.0"
+}
+var pathToWsdl = layout.projectDirectory.dir("src/main/resources/wsdl/GeoIpService.wsdl")
+
+tasks.register("geoIPService", Wsdl2Java){
+    toolOptions{
+//        print("Path created is: " + pathToWsdl)
+        wsdl.set(file(pathToWsdl))
+        outputDir.set(file("$buildDir/generated-java"))
+        markGenerated.set(true)
+    }
+}
+
+
+test {
+    useJUnitPlatform()
+}
